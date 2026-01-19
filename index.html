@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrición Cromática Pro - NaturalSlim</title>
+    <style>
+        :root {
+            --tipo-a: #10b981; --tipo-e: #ef4444; --bg: #0f172a; --card: #1e293b;
+            --text: #f8fafc; --primary: #6366f1;
+            --rojo: #ef4444; --naranja: #f97316; --amarillo: #facc15;
+            --verde: #22c55e; --azul: #3b82f6; --indigo: #6366f1; --violeta: #a855f7;
+        }
+
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh; overflow: hidden; }
+        .container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; padding: 20px; height: 100vh; box-sizing: border-box; }
+
+        .sidebar { background: var(--card); border-radius: 15px; display: flex; flex-direction: column; border: 1px solid #334155; overflow: hidden; }
+        .sidebar-header { padding: 15px; background: rgba(0,0,0,0.2); }
+        .food-container { overflow-y: auto; flex-grow: 1; padding: 10px; }
+
+        .accordion-item { border-bottom: 1px solid #334155; }
+        .accordion-header { 
+            width: 100%; padding: 12px 15px; background: none; border: none;
+            color: var(--primary); font-weight: bold; text-align: left;
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.9rem; text-transform: uppercase;
+        }
+        .accordion-content { display: none; padding: 10px; background: rgba(0,0,0,0.1); }
+        .accordion-content.active { display: block; }
+
+        .food-item { 
+            display: flex; align-items: center; padding: 8px 12px; margin-bottom: 5px;
+            background: #2d3a4f; border-radius: 6px; cursor: grab; font-size: 0.85rem;
+            border-right: 5px solid var(--f-color); transition: 0.2s;
+        }
+        .dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 10px; }
+        .dot-a { background: var(--tipo-a); }
+        .dot-e { background: var(--tipo-e); }
+
+        .planner-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; height: 75vh; }
+        .day-col { background: var(--card); border-radius: 12px; border-top: 6px solid var(--d-color); display: flex; flex-direction: column; }
+        .day-head { padding: 8px; text-align: center; background: rgba(0,0,0,0.2); }
+        .day-head b { color: var(--d-color); font-size: 0.85rem; display: block; }
+        .day-head span { font-size: 0.65rem; opacity: 0.7; }
+
+        .meal-box { flex: 1; padding: 8px; border-bottom: 1px solid #334155; overflow: hidden; cursor: pointer; }
+        .drop-zone { min-height: 50px; border: 1px dashed #475569; border-radius: 6px; padding: 5px; height: 100%; }
+        
+        .plate-item { 
+            font-size: 0.7rem; padding: 4px 6px; border-radius: 4px; margin-bottom: 3px; 
+            background: #1e293b; border-right: 3px solid var(--f-color);
+            display: flex; justify-content: space-between;
+        }
+
+        .analyzer { background: var(--card); padding: 15px; border-radius: 12px; margin-top: 15px; display: flex; align-items: center; gap: 20px; justify-content: space-between; }
+        .plate-viz { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #0f172a; transition: 0.5s; }
+        
+        .btn-print { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        input#search { width: 100%; padding: 10px; border-radius: 8px; border: none; background: #0f172a; color: white; }
+
+        @media print {
+            body * { visibility: hidden !important; }
+            #printArea, #printArea * { visibility: visible !important; display: block !important; }
+            #printArea { position: absolute; left: 0; top: 0; width: 100%; color: black !important; background: white !important; padding: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-header"><input type="text" id="search" placeholder="🔍 Buscar alimento..." onkeyup="renderLibrary()"></div>
+        <div class="food-container" id="accordionLibrary"></div>
+    </div>
+
+    <div class="main-content">
+        <div class="planner-grid" id="grid"></div>
+        <div class="analyzer">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="plate-viz" id="plateChart"></div>
+                <div>
+                    <h4 id="analysisTitle" style="margin:0">Selecciona un plato</h4>
+                    <p id="analysisDesc" style="font-size:0.8rem; color:#94a3b8; margin:0">A: 0 | E: 0</p>
+                </div>
+            </div>
+            <button class="btn-print" onclick="printList()">🛒 Imprimir Compras</button>
+        </div>
+    </div>
+</div>
+
+<div id="printArea"></div>
+
+<script>
+    const FOOD_DB = [
+        // PROTEÍNAS
+        { n: "Filete (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
+        { n: "Costillas de Res (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
+        { n: "Cordero (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
+        { n: "Lomo (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
+        { n: "Hígado (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
+        { n: "Bistec (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
+        { n: "Pollo (A)", t: "A", c: "blanco", cat: "PROTEÍNAS" },
+        { n: "Pavo (A)", t: "A", c: "blanco", cat: "PROTEÍNAS" },
+        { n: "Huevos (A)", t: "A", c: "amarillo", cat: "PROTEÍNAS" },
+        { n: "Salmón (A)", t: "A", c: "naranja", cat: "PROTEÍNAS" },
+        // VEGETALES
+        { n: "Brócoli (A)", t: "A", c: "verde", cat: "VEGETALES" },
+        { n: "Espinacas (A)", t: "A", c: "verde", cat: "VEGETALES" },
+        { n: "Lechuga (A)", t: "A", c: "verde", cat: "VEGETALES" },
+        { n: "Apio (A)", t: "A", c: "verde", cat: "VEGETALES" },
+        { n: "Tomate (A)", t: "A", c: "rojo", cat: "VEGETALES" },
+        { n: "Zanahoria (A)", t: "A", c: "naranja", cat: "VEGETALES" },
+        // LÁCTEOS
+        { n: "Queso Manchego (A)", t: "A", c: "amarillo", cat: "LÁCTEOS/QUESOS" },
+        { n: "Mantequilla (A)", t: "A", c: "amarillo", cat: "LÁCTEOS/QUESOS" },
+        // CARBOHIDRATOS E
+        { n: "Arroz Blanco (E)", t: "E", c: "blanco", cat: "CARBOHIDRATOS E" },
+        { n: "Pan Blanco (E)", t: "E", c: "blanco", cat: "CARBOHIDRATOS E" },
+        { n: "Pasta (E)", t: "E", c: "blanco", cat: "CARBOHIDRATOS E" },
+        { n: "Papa (E)", t: "E", c: "blanco", cat: "CARBOHIDRATOS E" },
+        { n: "Maíz (E)", t: "E", c: "amarillo", cat: "CARBOHIDRATOS E" }
+    ];
+
+    const DAYS = {
+        'Dom': { chakra: 'Raíz', color: 'var(--rojo)' },
+        'Lun': { chakra: 'Sacro', color: 'var(--naranja)' },
+        'Mar': { chakra: 'Plexo', color: 'var(--amarillo)' },
+        'Mie': { chakra: 'Corazón', color: 'var(--verde)' },
+        'Jue': { chakra: 'Garganta', color: 'var(--azul)' },
+        'Vie': { chakra: '3er Ojo', color: 'var(--indigo)' },
+        'Sab': { chakra: 'Corona', color: 'var(--violeta)' }
+    };
+
+    let schedule = JSON.parse(localStorage.getItem('nutri_final_db')) || {};
+
+    function renderLibrary() {
+        const container = document.getElementById('accordionLibrary');
+        const search = document.getElementById('search').value.toLowerCase();
+        const categories = [...new Set(FOOD_DB.map(f => f.cat))];
+        
+        container.innerHTML = categories.map(cat => {
+            const items = FOOD_DB.filter(f => f.cat === cat && f.n.toLowerCase().includes(search));
+            if (items.length === 0) return '';
+            return `
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">${cat} <span>+</span></button>
+                    <div class="accordion-content">
+                        ${items.map(f => `<div class="food-item" draggable="true" ondragstart="event.dataTransfer.setData('text', '${f.n}')" style="--f-color: var(--${f.c})"><div class="dot ${f.t === 'A' ? 'dot-a' : 'dot-e'}"></div>${f.n}</div>`).join('')}
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    function toggleAccordion(btn) {
+        const content = btn.nextElementSibling;
+        content.classList.toggle('active');
+        btn.querySelector('span').innerText = content.classList.contains('active') ? '-' : '+';
+    }
+
+    function renderGrid() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = Object.entries(DAYS).map(([name, data]) => `
+            <div class="day-col" style="--d-color: ${data.color}">
+                <div class="day-head"><b>${name}</b><span>${data.chakra}</span></div>
+                ${['D', 'A', 'C'].map(m => `
+                    <div class="meal-box" onclick="analyze('${name}', '${m}')">
+                        <div class="drop-zone" ondragover="event.preventDefault()" ondrop="drop(event, '${name}', '${m}')">
+                            ${renderItems(name, m)}
+                        </div>
+                    </div>`).join('')}
+            </div>`).join('');
+    }
+
+    function renderItems(d, m) {
+        const key = `${d}-${m}`;
+        return (schedule[key] || []).map((n, i) => {
+            const f = FOOD_DB.find(x => x.n === n);
+            return `<div class="plate-item" style="--f-color: var(--${f.c})">${n} <span onclick="removeItem('${key}', ${i})" style="cursor:pointer">×</span></div>`;
+        }).join('');
+    }
+
+    function drop(ev, d, m) {
+        ev.preventDefault();
+        const name = ev.dataTransfer.getData("text");
+        const key = `${d}-${m}`;
+        if(!schedule[key]) schedule[key] = [];
+        schedule[key].push(name);
+        save(); renderGrid(); analyze(d, m);
+    }
+
+    function removeItem(key, i) {
+        event.stopPropagation();
+        schedule[key].splice(i, 1);
+        save(); renderGrid(); analyze(key.split('-')[0], key.split('-')[1]);
+    }
+
+    function analyze(d, m) {
+        const items = schedule[`${d}-${m}`] || [];
+        const chart = document.getElementById('plateChart');
+        let a = 0, e = 0;
+        items.forEach(n => { const f = FOOD_DB.find(x => x.n === n); if(f.t === 'A') a++; else e++; });
+
+        let msg = "";
+        if (items.length === 0) {
+            chart.style.background = '#1e293b';
+            msg = "Añade alimentos para ver el plato.";
+        } else {
+            // Plato 3x1 Fijo
+            chart.style.background = `conic-gradient(var(--tipo-e) 0% 25%, var(--tipo-a) 25% 100%)`;
+            if (e > 1) msg = "⚠️ Demasiados E. Solo se permite 1/4 del plato.";
+            else if (a < 3) msg = `Faltan ${3-a} alimentos Tipo A para completar el 3x1.`;
+            else if (a >= 3 && e === 1) msg = "✅ ¡Plato 3x1 Perfecto!";
+            else if (e === 0) msg = "Falta el alimento Tipo E (1/4 del plato).";
+        }
+        document.getElementById('analysisTitle').innerText = `${d}: ${m}`;
+        document.getElementById('analysisDesc').innerText = msg;
+    }
+
+    function printList() {
+        const allItems = Object.values(schedule).flat();
+        if(allItems.length === 0) return alert("Planificador vacío");
+        const counts = allItems.reduce((acc, f) => { acc[f] = (acc[f] || 0) + 1; return acc; }, {});
+        let html = `<div style="color: black; padding: 20px;"><h1>🛒 Lista de Compras</h1><ul>`;
+        for(let item in counts) { html += `<li><b>${counts[item]} porción(es)</b> de ${item}</li>`; }
+        document.getElementById('printArea').innerHTML = html + `</ul></div>`;
+        window.print();
+    }
+
+    function save() { localStorage.setItem('nutri_final_db', JSON.stringify(schedule)); }
+
+    renderLibrary();
+    renderGrid();
+</script>
+</body>
+</html>
