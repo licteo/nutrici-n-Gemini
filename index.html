@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nutrición Cromática Pro - NaturalSlim</title>
+    <title>Nutrición Pro COP - Lista Completa</title>
     <style>
         :root {
             --tipo-a: #10b981; --tipo-e: #ef4444; --bg: #0f172a; --card: #1e293b;
             --text: #f8fafc; --primary: #6366f1;
             --rojo: #ef4444; --naranja: #f97316; --amarillo: #facc15;
             --verde: #22c55e; --azul: #3b82f6; --indigo: #6366f1; --violeta: #a855f7;
+            --blanco: #ffffff;
         }
 
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh; overflow: hidden; }
-        .container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; padding: 20px; height: 100vh; box-sizing: border-box; }
-
+        
+        /* Interfaz */
+        .container { display: grid; grid-template-columns: 400px 1fr; gap: 20px; padding: 20px; height: 100vh; box-sizing: border-box; }
         .sidebar { background: var(--card); border-radius: 15px; display: flex; flex-direction: column; border: 1px solid #334155; overflow: hidden; }
         .sidebar-header { padding: 15px; background: rgba(0,0,0,0.2); }
         .food-container { overflow-y: auto; flex-grow: 1; padding: 10px; }
@@ -24,46 +26,64 @@
             width: 100%; padding: 12px 15px; background: none; border: none;
             color: var(--primary); font-weight: bold; text-align: left;
             cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.9rem; text-transform: uppercase;
+            font-size: 0.85rem; text-transform: uppercase;
         }
-        .accordion-content { display: none; padding: 10px; background: rgba(0,0,0,0.1); }
+        .accordion-content { display: none; padding: 8px; background: rgba(0,0,0,0.1); }
         .accordion-content.active { display: block; }
 
         .food-item { 
-            display: flex; align-items: center; padding: 8px 12px; margin-bottom: 5px;
-            background: #2d3a4f; border-radius: 6px; cursor: grab; font-size: 0.85rem;
-            border-right: 5px solid var(--f-color); transition: 0.2s;
+            display: flex; align-items: center; padding: 8px 10px; margin-bottom: 5px;
+            background: #2d3a4f; border-radius: 6px; font-size: 0.8rem;
+            border-right: 5px solid var(--f-color);
         }
+        .food-name { cursor: pointer; flex-grow: 1; display: flex; align-items: center; }
+        .price-container { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 4px; }
+        .price-tag { font-size: 0.75rem; color: var(--amarillo); font-weight: bold; }
+        .btn-edit-price { cursor: pointer; font-size: 0.7rem; opacity: 0.6; }
+
         .dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 10px; }
         .dot-a { background: var(--tipo-a); }
         .dot-e { background: var(--tipo-e); }
 
-        .planner-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; height: 75vh; }
+        /* Planificador */
+        .planner-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; height: 72vh; }
         .day-col { background: var(--card); border-radius: 12px; border-top: 6px solid var(--d-color); display: flex; flex-direction: column; }
-        .day-head { padding: 8px; text-align: center; background: rgba(0,0,0,0.2); }
-        .day-head b { color: var(--d-color); font-size: 0.85rem; display: block; }
-        .day-head span { font-size: 0.65rem; opacity: 0.7; }
+        .day-head { padding: 6px; text-align: center; background: rgba(0,0,0,0.2); }
+        .day-head b { color: var(--d-color); font-size: 0.8rem; display: block; }
 
-        .meal-box { flex: 1; padding: 8px; border-bottom: 1px solid #334155; overflow: hidden; cursor: pointer; }
-        .drop-zone { min-height: 50px; border: 1px dashed #475569; border-radius: 6px; padding: 5px; height: 100%; }
+        .meal-box { flex: 1; padding: 5px; border-bottom: 1px solid #334155; overflow-y: auto; cursor: cell; }
+        .meal-box.selected { border: 2px solid var(--primary); background: rgba(99, 102, 241, 0.1); }
         
         .plate-item { 
-            font-size: 0.7rem; padding: 4px 6px; border-radius: 4px; margin-bottom: 3px; 
+            font-size: 0.65rem; padding: 3px 5px; border-radius: 4px; margin-bottom: 3px; 
             background: #1e293b; border-right: 3px solid var(--f-color);
-            display: flex; justify-content: space-between;
+            display: flex; justify-content: space-between; align-items: center;
         }
+        .btn-remove { color: var(--tipo-e); cursor: pointer; font-weight: bold; margin-left: 4px; }
 
-        .analyzer { background: var(--card); padding: 15px; border-radius: 12px; margin-top: 15px; display: flex; align-items: center; gap: 20px; justify-content: space-between; }
-        .plate-viz { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #0f172a; transition: 0.5s; }
-        
-        .btn-print { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        /* Barra Inferior */
+        .analyzer { background: var(--card); padding: 15px; border-radius: 12px; margin-top: 15px; display: flex; align-items: center; gap: 20px; justify-content: space-between; border: 1px solid #334155; }
+        .plate-viz { width: 50px; height: 50px; border-radius: 50%; border: 3px solid #0f172a; background: #1e293b; }
+        .budget-val { font-size: 1.2rem; font-weight: bold; color: var(--amarillo); }
+        .btn-print { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
         input#search { width: 100%; padding: 10px; border-radius: 8px; border: none; background: #0f172a; color: white; }
 
+        /* --- CORRECCIÓN DE IMPRESIÓN --- */
+        #printArea { display: none; }
         @media print {
-            body * { visibility: hidden !important; }
-            #printArea, #printArea * { visibility: visible !important; display: block !important; }
-            #printArea { position: absolute; left: 0; top: 0; width: 100%; color: black !important; background: white !important; padding: 40px; }
+            body { background: white !important; height: auto; overflow: visible; }
+            .container { display: none !important; }
+            #printArea { 
+                display: block !important; 
+                color: black !important; 
+                width: 100%; 
+                padding: 20px;
+            }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #333; padding: 10px; text-align: left; color: black; }
+            th { background-color: #eee; }
+            h1 { text-align: center; }
         }
     </style>
 </head>
@@ -78,12 +98,16 @@
     <div class="main-content">
         <div class="planner-grid" id="grid"></div>
         <div class="analyzer">
-            <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 15px;">
                 <div class="plate-viz" id="plateChart"></div>
                 <div>
-                    <h4 id="analysisTitle" style="margin:0">Selecciona un plato</h4>
-                    <p id="analysisDesc" style="font-size:0.8rem; color:#94a3b8; margin:0">A: 0 | E: 0</p>
+                    <h4 id="analysisTitle" style="margin:0; font-size:0.85rem;">Plan 3x1</h4>
+                    <p id="analysisDesc" style="font-size:0.7rem; color:#94a3b8; margin:0">Click en un bloque</p>
                 </div>
+            </div>
+            <div style="text-align: right; border-left: 1px solid #334155; padding-left: 20px;">
+                <span style="font-size: 0.6rem; opacity: 0.8; display: block;">PRESUPUESTO TOTAL</span>
+                <div class="budget-val" id="totalBudget">COP 0</div>
             </div>
             <button class="btn-print" onclick="printList()">🛒 Imprimir Compras</button>
         </div>
@@ -93,145 +117,209 @@
 <div id="printArea"></div>
 
 <script>
+    // FORMATEADOR COP
+    const formatCOP = (n) => "COP " + Math.round(n).toLocaleString('es-CO');
+
     const FOOD_DB = [
         // PROTEÍNAS
-        { n: "Filete (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
-        { n: "Costillas de Res (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
-        { n: "Cordero (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
-        { n: "Lomo (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
-        { n: "Hígado (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
-        { n: "Bistec (A)", t: "A", c: "rojo", cat: "PROTEÍNAS" },
-        { n: "Pollo (A)", t: "A", c: "blanco", cat: "PROTEÍNAS" },
-        { n: "Pavo (A)", t: "A", c: "blanco", cat: "PROTEÍNAS" },
-        { n: "Huevos (A)", t: "A", c: "amarillo", cat: "PROTEÍNAS" },
-        { n: "Salmón (A)", t: "A", c: "naranja", cat: "PROTEÍNAS" },
+        { n: "Filete (A)", t: "A", c: "rojo", cat: "Proteínas", p: 25000 },
+        { n: "Mechada (A)", t: "A", c: "rojo", cat: "Proteínas", p: 18000 },
+        { n: "Bistec (A)", t: "A", c: "rojo", cat: "Proteínas", p: 22000 },
+        { n: "Hígado (A)", t: "A", c: "rojo", cat: "Proteínas", p: 9000 },
+        { n: "Cordero (A)", t: "A", c: "rojo", cat: "Proteínas", p: 35000 },
+        { n: "Lomo (A)", t: "A", c: "rojo", cat: "Proteínas", p: 20000 },
+        { n: "Churrasco (A)", t: "A", c: "rojo", cat: "Proteínas", p: 28000 },
+        { n: "Costillas de Res (A)", t: "A", c: "rojo", cat: "Proteínas", p: 24000 },
+        { n: "Carne Molida (A)", t: "A", c: "rojo", cat: "Proteínas", p: 16000 },
+        { n: "Angus (A)", t: "A", c: "rojo", cat: "Proteínas", p: 45000 },
+        { n: "Pollo (A)", t: "A", c: "blanco", cat: "Proteínas", p: 14000 },
+        { n: "Pavo (A)", t: "A", c: "blanco", cat: "Proteínas", p: 19000 },
+        { n: "Huevos (A)", t: "A", c: "amarillo", cat: "Proteínas", p: 700 },
+        { n: "Codorniz (A)", t: "A", c: "blanco", cat: "Proteínas", p: 1200 },
+        { n: "Chuleta de Cerdo (A)", t: "A", c: "rojo", cat: "Proteínas", p: 15000 },
+        { n: "Chorizo (A)", t: "A", c: "rojo", cat: "Proteínas", p: 4000 },
+        { n: "Pernil (A)", t: "A", c: "rojo", cat: "Proteínas", p: 26000 },
+        { n: "Tocino (A)", t: "A", c: "rojo", cat: "Proteínas", p: 9000 },
+        { n: "Jamón Serrano (A)", t: "A", c: "rojo", cat: "Proteínas", p: 12000 },
+        { n: "Salmón (A)", t: "A", c: "naranja", cat: "Proteínas", p: 42000 },
+        { n: "Atún (A)", t: "A", c: "azul", cat: "Proteínas", p: 8000 },
+        { n: "Bacalao (A)", t: "A", c: "azul", cat: "Proteínas", p: 38000 },
+        { n: "Mero (A)", t: "A", c: "azul", cat: "Proteínas", p: 32000 },
+        { n: "Tilapia (A)", t: "A", c: "azul", cat: "Proteínas", p: 15000 },
+        { n: "Camarones (A)", t: "A", c: "azul", cat: "Proteínas", p: 35000 },
+        { n: "Langosta (A)", t: "A", c: "azul", cat: "Proteínas", p: 95000 },
+        { n: "Pulpo (A)", t: "A", c: "azul", cat: "Proteínas", p: 55000 },
+        { n: "Calamares (A)", t: "A", c: "azul", cat: "Proteínas", p: 25000 },
+        { n: "Cangrejo (A)", t: "A", c: "azul", cat: "Proteínas", p: 48000 },
+        { n: "Almejas (A)", t: "A", c: "azul", cat: "Proteínas", p: 22000 },
+
         // VEGETALES
-        { n: "Brócoli (A)", t: "A", c: "verde", cat: "VEGETALES" },
-        { n: "Espinacas (A)", t: "A", c: "verde", cat: "VEGETALES" },
-        { n: "Lechuga (A)", t: "A", c: "verde", cat: "VEGETALES" },
-        { n: "Apio (A)", t: "A", c: "verde", cat: "VEGETALES" },
-        { n: "Tomate (A)", t: "A", c: "rojo", cat: "VEGETALES" },
-        { n: "Zanahoria (A)", t: "A", c: "naranja", cat: "VEGETALES" },
+        { n: "Apio (A)", t: "A", c: "verde", cat: "Vegetales", p: 3500 },
+        { n: "Brócoli (A)", t: "A", c: "verde", cat: "Vegetales", p: 5000 },
+        { n: "Col Rizada (A)", t: "A", c: "verde", cat: "Vegetales", p: 4500 },
+        { n: "Espinacas (A)", t: "A", c: "verde", cat: "Vegetales", p: 3500 },
+        { n: "Lechuga (A)", t: "A", c: "verde", cat: "Vegetales", p: 4000 },
+        { n: "Espárragos (A)", t: "A", c: "verde", cat: "Vegetales", p: 12000 },
+        { n: "Habichuelas (A)", t: "A", c: "verde", cat: "Vegetales", p: 3000 },
+        { n: "Chayote (A)", t: "A", c: "verde", cat: "Vegetales", p: 2500 },
+        { n: "Zucchini (A)", t: "A", c: "verde", cat: "Vegetales", p: 3500 },
+        { n: "Aguacate (A)", t: "A", c: "verde", cat: "Vegetales", p: 5000 },
+        { n: "Pimiento Verde (A)", t: "A", c: "verde", cat: "Vegetales", p: 2000 },
+        { n: "Pimiento Rojo (A)", t: "A", c: "rojo", cat: "Vegetales", p: 2200 },
+        { n: "Pimiento Amarillo (A)", t: "A", c: "amarillo", cat: "Vegetales", p: 2500 },
+        { n: "Rúcula (A)", t: "A", c: "verde", cat: "Vegetales", p: 6000 },
+        { n: "Zanahorias (A)", t: "A", c: "naranja", cat: "Vegetales", p: 1500 },
+        { n: "Berenjena (A)", t: "A", c: "violeta", cat: "Vegetales", p: 3500 },
+
         // LÁCTEOS
-        { n: "Queso Manchego (A)", t: "A", c: "amarillo", cat: "LÁCTEOS/QUESOS" },
-        { n: "Mantequilla (A)", t: "A", c: "amarillo", cat: "LÁCTEOS/QUESOS" },
+        { n: "Queso Manchego (A)", t: "A", c: "amarillo", cat: "Lácteos/Quesos", p: 15000 },
+        { n: "Queso Cheddar (A)", t: "A", c: "amarillo", cat: "Lácteos/Quesos", p: 12000 },
+        { n: "Queso Mozzarella (A)", t: "A", c: "blanco", cat: "Lácteos/Quesos", p: 10000 },
+        { n: "Queso Feta (A)", t: "A", c: "blanco", cat: "Lácteos/Quesos", p: 18000 },
+        { n: "Yogur Griego sin azúcar (A)", t: "A", c: "blanco", cat: "Lácteos/Quesos", p: 4500 },
+        { n: "Mantequilla (A)", t: "A", c: "amarillo", cat: "Lácteos/Quesos", p: 8000 },
+
         // CARBOHIDRATOS E
-        { n: "Arroz Blanco (E)", t: "E", c: "blanco", cat: "CARBOHIDRATOS E" },
-        { n: "Pan Blanco (E)", t: "E", c: "blanco", cat: "CARBOHIDRATOS E" },
-        { n: "Pasta (E)", t: "E", c: "blanco", cat: "CARBOHIDRATOS E" },
-        { n: "Papa (E)", t: "E", c: "blanco", cat: "CARBOHIDRATOS E" },
-        { n: "Maíz (E)", t: "E", c: "amarillo", cat: "CARBOHIDRATOS E" }
+        { n: "Arroz Blanco (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 2200 },
+        { n: "Arroz Integral (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 3500 },
+        { n: "Pan Blanco (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 4000 },
+        { n: "Pan Integral (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 5500 },
+        { n: "Pasta (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 3800 },
+        { n: "Papa / Patata (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 2000 },
+        { n: "Maíz (E)", t: "E", c: "amarillo", cat: "Carbohidratos E", p: 2500 },
+        { n: "Tortilla de Maíz (E)", t: "E", c: "amarillo", cat: "Carbohidratos E", p: 1000 },
+        { n: "Harina de Trigo (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 3000 },
+        { n: "Azúcar (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 4500 },
+        { n: "Cereal de Caja (E)", t: "E", c: "amarillo", cat: "Carbohidratos E", p: 15000 },
+        { n: "Avena (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 6000 },
+        { n: "Granola (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 12000 },
+        { n: "Plátano Maduro (E)", t: "E", c: "amarillo", cat: "Carbohidratos E", p: 1500 },
+        { n: "Yuca (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 2000 },
+        { n: "Camote / Batata (E)", t: "E", c: "naranja", cat: "Carbohidratos E", p: 3000 },
+        { n: "Refrescos Dulces (E)", t: "E", c: "rojo", cat: "Carbohidratos E", p: 4500 },
+        { n: "Pizza (E)", t: "E", c: "rojo", cat: "Carbohidratos E", p: 25000 }
     ];
 
     const DAYS = {
-        'Dom': { chakra: 'Raíz', color: 'var(--rojo)' },
-        'Lun': { chakra: 'Sacro', color: 'var(--naranja)' },
-        'Mar': { chakra: 'Plexo', color: 'var(--amarillo)' },
-        'Mie': { chakra: 'Corazón', color: 'var(--verde)' },
-        'Jue': { chakra: 'Garganta', color: 'var(--azul)' },
-        'Vie': { chakra: '3er Ojo', color: 'var(--indigo)' },
-        'Sab': { chakra: 'Corona', color: 'var(--violeta)' }
+        'Dom': { c: 'var(--rojo)' }, 'Lun': { c: 'var(--naranja)' }, 'Mar': { c: 'var(--amarillo)' },
+        'Mie': { c: 'var(--verde)' }, 'Jue': { c: 'var(--azul)' }, 'Vie': { c: 'var(--indigo)' }, 'Sab': { c: 'var(--violeta)' }
     };
 
-    let schedule = JSON.parse(localStorage.getItem('nutri_final_db')) || {};
+    let schedule = JSON.parse(localStorage.getItem('ns_plan_cop')) || {};
+    let customPrices = JSON.parse(localStorage.getItem('ns_prices_cop')) || {};
+    let selectedMealKey = 'Dom-D';
 
-    function renderLibrary() {
-        const container = document.getElementById('accordionLibrary');
-        const search = document.getElementById('search').value.toLowerCase();
-        const categories = [...new Set(FOOD_DB.map(f => f.cat))];
-        
-        container.innerHTML = categories.map(cat => {
-            const items = FOOD_DB.filter(f => f.cat === cat && f.n.toLowerCase().includes(search));
-            if (items.length === 0) return '';
-            return `
-                <div class="accordion-item">
-                    <button class="accordion-header" onclick="toggleAccordion(this)">${cat} <span>+</span></button>
-                    <div class="accordion-content">
-                        ${items.map(f => `<div class="food-item" draggable="true" ondragstart="event.dataTransfer.setData('text', '${f.n}')" style="--f-color: var(--${f.c})"><div class="dot ${f.t === 'A' ? 'dot-a' : 'dot-e'}"></div>${f.n}</div>`).join('')}
-                    </div>
-                </div>`;
-        }).join('');
+    function getPrice(name) {
+        return customPrices[name] !== undefined ? parseInt(customPrices[name]) : (FOOD_DB.find(f => f.n === name)?.p || 0);
     }
 
-    function toggleAccordion(btn) {
-        const content = btn.nextElementSibling;
-        content.classList.toggle('active');
-        btn.querySelector('span').innerText = content.classList.contains('active') ? '-' : '+';
+    function updatePrice(name, e) {
+        e.stopPropagation();
+        const nPrice = prompt(`Precio COP para ${name}:`, getPrice(name));
+        if (nPrice !== null && !isNaN(nPrice)) {
+            customPrices[name] = parseInt(nPrice);
+            localStorage.setItem('ns_prices_cop', JSON.stringify(customPrices));
+            renderLibrary(); renderGrid();
+        }
+    }
+
+    function renderLibrary() {
+        const search = document.getElementById('search').value.toLowerCase();
+        const cats = [...new Set(FOOD_DB.map(f => f.cat))];
+        document.getElementById('accordionLibrary').innerHTML = cats.map(cat => {
+            const items = FOOD_DB.filter(f => f.cat === cat && f.n.toLowerCase().includes(search));
+            if (!items.length) return '';
+            return `<div class="accordion-item">
+                <button class="accordion-header" onclick="this.nextElementSibling.classList.toggle('active')">${cat} ▾</button>
+                <div class="accordion-content">
+                    ${items.map(f => `
+                        <div class="food-item" style="--f-color: var(--${f.c})">
+                            <div class="food-name" onclick="addItem('${f.n}')">
+                                <div class="dot ${f.t === 'A' ? 'dot-a' : 'dot-e'}"></div> ${f.n}
+                            </div>
+                            <div class="price-container">
+                                <span class="price-tag">${getPrice(f.n).toLocaleString('es-CO')}</span>
+                                <span class="btn-edit-price" onclick="updatePrice('${f.n}', event)">✏️</span>
+                            </div>
+                        </div>`).join('')}
+                </div>
+            </div>`;
+        }).join('');
     }
 
     function renderGrid() {
-        const grid = document.getElementById('grid');
-        grid.innerHTML = Object.entries(DAYS).map(([name, data]) => `
-            <div class="day-col" style="--d-color: ${data.color}">
-                <div class="day-head"><b>${name}</b><span>${data.chakra}</span></div>
-                ${['D', 'A', 'C'].map(m => `
-                    <div class="meal-box" onclick="analyze('${name}', '${m}')">
-                        <div class="drop-zone" ondragover="event.preventDefault()" ondrop="drop(event, '${name}', '${m}')">
-                            ${renderItems(name, m)}
-                        </div>
-                    </div>`).join('')}
+        let total = 0;
+        document.getElementById('grid').innerHTML = Object.entries(DAYS).map(([name, data]) => `
+            <div class="day-col" style="--d-color: ${data.c}">
+                <div class="day-head"><b>${name}</b></div>
+                ${['D', 'A', 'C'].map(m => {
+                    const key = `${name}-${m}`;
+                    (schedule[key] || []).forEach(n => total += getPrice(n));
+                    return `<div class="meal-box ${selectedMealKey === key ? 'selected' : ''}" onclick="selectMeal('${key}')">
+                        ${(schedule[key] || []).map((n, i) => {
+                            const f = FOOD_DB.find(x => x.n === n);
+                            return `<div class="plate-item" style="--f-color: var(--${f?.c || 'gray'})">${n} 
+                                <span class="btn-remove" onclick="removeItem('${key}', ${i}, event)">×</span></div>`;
+                        }).join('')}
+                    </div>`;
+                }).join('')}
             </div>`).join('');
+        document.getElementById('totalBudget').innerText = formatCOP(total);
     }
 
-    function renderItems(d, m) {
-        const key = `${d}-${m}`;
-        return (schedule[key] || []).map((n, i) => {
-            const f = FOOD_DB.find(x => x.n === n);
-            return `<div class="plate-item" style="--f-color: var(--${f.c})">${n} <span onclick="removeItem('${key}', ${i})" style="cursor:pointer">×</span></div>`;
-        }).join('');
+    function selectMeal(key) { selectedMealKey = key; renderGrid(); analyze(); }
+
+    function addItem(name) {
+        if(!schedule[selectedMealKey]) schedule[selectedMealKey] = [];
+        schedule[selectedMealKey].push(name);
+        localStorage.setItem('ns_plan_cop', JSON.stringify(schedule));
+        renderGrid(); analyze();
     }
 
-    function drop(ev, d, m) {
-        ev.preventDefault();
-        const name = ev.dataTransfer.getData("text");
-        const key = `${d}-${m}`;
-        if(!schedule[key]) schedule[key] = [];
-        schedule[key].push(name);
-        save(); renderGrid(); analyze(d, m);
+    function removeItem(key, i, e) {
+        e.stopPropagation(); schedule[key].splice(i, 1);
+        localStorage.setItem('ns_plan_cop', JSON.stringify(schedule));
+        renderGrid(); analyze();
     }
 
-    function removeItem(key, i) {
-        event.stopPropagation();
-        schedule[key].splice(i, 1);
-        save(); renderGrid(); analyze(key.split('-')[0], key.split('-')[1]);
-    }
-
-    function analyze(d, m) {
-        const items = schedule[`${d}-${m}`] || [];
+    function analyze() {
+        const items = schedule[selectedMealKey] || [];
         const chart = document.getElementById('plateChart');
         let a = 0, e = 0;
-        items.forEach(n => { const f = FOOD_DB.find(x => x.n === n); if(f.t === 'A') a++; else e++; });
-
-        let msg = "";
-        if (items.length === 0) {
-            chart.style.background = '#1e293b';
-            msg = "Añade alimentos para ver el plato.";
-        } else {
-            // Plato 3x1 Fijo
-            chart.style.background = `conic-gradient(var(--tipo-e) 0% 25%, var(--tipo-a) 25% 100%)`;
-            if (e > 1) msg = "⚠️ Demasiados E. Solo se permite 1/4 del plato.";
-            else if (a < 3) msg = `Faltan ${3-a} alimentos Tipo A para completar el 3x1.`;
-            else if (a >= 3 && e === 1) msg = "✅ ¡Plato 3x1 Perfecto!";
-            else if (e === 0) msg = "Falta el alimento Tipo E (1/4 del plato).";
-        }
-        document.getElementById('analysisTitle').innerText = `${d}: ${m}`;
-        document.getElementById('analysisDesc').innerText = msg;
+        items.forEach(n => { const f = FOOD_DB.find(x => x.n === n); if(f?.t === 'A') a++; else e++; });
+        chart.style.background = items.length ? `conic-gradient(var(--tipo-e) 0% 25%, var(--tipo-a) 25% 100%)` : '#1e293b';
+        document.getElementById('analysisDesc').innerText = items.length ? `${a} Tipo A | ${e} Tipo E` : "Selecciona un bloque";
     }
 
     function printList() {
-        const allItems = Object.values(schedule).flat();
-        if(allItems.length === 0) return alert("Planificador vacío");
-        const counts = allItems.reduce((acc, f) => { acc[f] = (acc[f] || 0) + 1; return acc; }, {});
-        let html = `<div style="color: black; padding: 20px;"><h1>🛒 Lista de Compras</h1><ul>`;
-        for(let item in counts) { html += `<li><b>${counts[item]} porción(es)</b> de ${item}</li>`; }
-        document.getElementById('printArea').innerHTML = html + `</ul></div>`;
+        const all = Object.values(schedule).flat();
+        if(!all.length) return alert("El planificador está vacío.");
+        
+        const summary = all.reduce((acc, n) => {
+            if(!acc[n]) acc[n] = { q: 0, p: getPrice(n) };
+            acc[n].q++; return acc;
+        }, {});
+
+        let rows = "", total = 0;
+        for(let n in summary) {
+            const sub = summary[n].q * summary[n].p;
+            total += sub;
+            rows += `<tr><td>${n}</td><td>${summary[n].q}</td><td>${summary[n].p.toLocaleString('es-CO')}</td><td>${sub.toLocaleString('es-CO')}</td></tr>`;
+        }
+
+        document.getElementById('printArea').innerHTML = `
+            <h1>🛒 LISTA DE COMPRAS - NATURAL SLIM</h1>
+            <p>Generado: ${new Date().toLocaleDateString()}</p>
+            <table>
+                <thead><tr><th>Alimento</th><th>Cantidad</th><th>Precio Unit.</th><th>Subtotal</th></tr></thead>
+                <tbody>${rows}</tbody>
+                <tfoot><tr><th colspan="3" style="text-align:right">TOTAL ESTIMADO:</th><th>COP ${total.toLocaleString('es-CO')}</th></tr></tfoot>
+            </table>
+        `;
         window.print();
     }
 
-    function save() { localStorage.setItem('nutri_final_db', JSON.stringify(schedule)); }
-
-    renderLibrary();
-    renderGrid();
+    renderLibrary(); renderGrid();
 </script>
 </body>
 </html>
