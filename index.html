@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriChakra 3x1 Pro</title>
+    <title>NutriChakra 3x1 Pro + Editor</title>
     
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
@@ -20,7 +20,7 @@
 
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh; overflow: hidden; }
         
-        .container { display: grid; grid-template-columns: 380px 1fr; gap: 20px; padding: 20px; height: 100vh; box-sizing: border-box; }
+        .container { display: grid; grid-template-columns: 400px 1fr; gap: 20px; padding: 20px; height: 100vh; box-sizing: border-box; }
         .sidebar { background: var(--card); border-radius: 15px; display: flex; flex-direction: column; border: 1px solid #334155; overflow: hidden; }
         .sidebar-header { padding: 15px; background: rgba(0,0,0,0.2); }
         .food-container { overflow-y: auto; flex-grow: 1; padding: 10px; }
@@ -41,22 +41,28 @@
         .dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 10px; }
         .dot-a { background: var(--tipo-a); } .dot-e { background: var(--tipo-e); }
 
+        /* Edición de precio */
+        .price-box { display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; }
+        .price-val { color: var(--amarillo); font-weight: bold; font-size: 0.7rem; }
+        .btn-edit { cursor: pointer; font-size: 0.65rem; opacity: 0.6; transition: 0.2s; }
+        .btn-edit:hover { opacity: 1; }
+
         .planner-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; height: 72vh; }
         .day-col { background: var(--card); border-radius: 12px; border-top: 6px solid var(--d-color); display: flex; flex-direction: column; }
         .day-head { padding: 8px; text-align: center; background: rgba(0,0,0,0.2); }
         .day-head b { color: var(--d-color); font-size: 0.8rem; display: block; }
-        .day-head span { font-size: 0.6rem; opacity: 0.7; color: white; }
+        .day-head span { font-size: 0.55rem; opacity: 0.7; color: white; text-transform: uppercase; }
 
         .meal-box { flex: 1; padding: 5px; border-bottom: 1px solid #334155; overflow-y: auto; cursor: cell; }
-        .meal-box.selected { background: rgba(255, 255, 255, 0.05); border: 2px solid var(--primary); }
+        .meal-box.selected { background: rgba(99, 102, 241, 0.1); border: 2px solid var(--primary); }
         
         .plate-item { font-size: 0.65rem; padding: 4px; border-radius: 4px; margin-bottom: 3px; background: #0f172a; border-left: 3px solid var(--f-color); display: flex; justify-content: space-between; }
         .btn-remove { color: var(--tipo-e); cursor: pointer; font-weight: bold; }
 
         .analyzer { background: var(--card); padding: 15px; border-radius: 15px; margin-top: 15px; display: flex; align-items: center; gap: 20px; border: 1px solid #334155; }
-        .plate-viz { width: 55px; height: 55px; border-radius: 50%; border: 3px solid #0f172a; transition: 0.3s; }
+        .plate-viz { width: 55px; height: 55px; border-radius: 50%; border: 3px solid #0f172a; }
         .chakra-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; color: #fff; display: inline-block; margin-top: 5px; }
-        .budget-val { font-size: 1.2rem; font-weight: bold; color: var(--amarillo); }
+        .budget-val { font-size: 1.1rem; font-weight: bold; color: var(--amarillo); }
         .btn-print { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-left: auto; }
 
         input#search { width: 100%; padding: 10px; border-radius: 8px; border: none; background: #0f172a; color: white; outline: none; }
@@ -80,10 +86,10 @@
             <div>
                 <h4 id="analysisTitle" style="margin:0; font-size:0.9rem;">Analizador Energético</h4>
                 <div id="chakraBadge" class="chakra-badge" style="background: #334155;">Chakra -</div>
-                <p id="analysisDesc" style="font-size:0.7rem; color:#94a3b8; margin:5px 0 0">Click en un bloque para analizar</p>
+                <p id="analysisDesc" style="font-size:0.7rem; color:#94a3b8; margin:5px 0 0">Click en un bloque</p>
             </div>
             <div style="text-align: right; border-left: 1px solid #334155; padding-left: 20px;">
-                <span style="font-size: 0.6rem; opacity: 0.8; display: block;">PRESUPUESTO ESTIMADO</span>
+                <span style="font-size: 0.55rem; opacity: 0.8; display: block;">PRESUPUESTO TOTAL</span>
                 <div class="budget-val" id="totalBudget">COP 0</div>
             </div>
             <button class="btn-print" onclick="printList()">🛒 Compras</button>
@@ -136,7 +142,6 @@
         { n: "Calamares (A)", t: "A", c: "azul", cat: "Proteínas", p: 25000 },
         { n: "Cangrejo (A)", t: "A", c: "azul", cat: "Proteínas", p: 48000 },
         { n: "Almejas (A)", t: "A", c: "azul", cat: "Proteínas", p: 22000 },
-
         // VEGETALES
         { n: "Apio (A)", t: "A", c: "verde", cat: "Vegetales", p: 3500 },
         { n: "Brócoli (A)", t: "A", c: "verde", cat: "Vegetales", p: 5000 },
@@ -154,7 +159,6 @@
         { n: "Rúcula (A)", t: "A", c: "verde", cat: "Vegetales", p: 6000 },
         { n: "Zanahorias (A)", t: "A", c: "naranja", cat: "Vegetales", p: 1500 },
         { n: "Berenjena (A)", t: "A", c: "violeta", cat: "Vegetales", p: 3500 },
-
         // LÁCTEOS
         { n: "Queso Manchego (A)", t: "A", c: "amarillo", cat: "Lácteos/Quesos", p: 15000 },
         { n: "Queso Cheddar (A)", t: "A", c: "amarillo", cat: "Lácteos/Quesos", p: 12000 },
@@ -162,7 +166,6 @@
         { n: "Queso Feta (A)", t: "A", c: "blanco", cat: "Lácteos/Quesos", p: 18000 },
         { n: "Yogur Griego sin azúcar (A)", t: "A", c: "blanco", cat: "Lácteos/Quesos", p: 4500 },
         { n: "Mantequilla (A)", t: "A", c: "amarillo", cat: "Lácteos/Quesos", p: 8000 },
-
         // CARBOHIDRATOS E
         { n: "Arroz Blanco (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 2200 },
         { n: "Arroz Integral (E)", t: "E", c: "blanco", cat: "Carbohidratos E", p: 3500 },
@@ -185,7 +188,22 @@
     ];
 
     let schedule = JSON.parse(localStorage.getItem('ns_plan_pro')) || {};
+    let customPrices = JSON.parse(localStorage.getItem('ns_prices_pro')) || {};
     let selectedKey = 'Dom-A';
+
+    function getPrice(name) {
+        return customPrices[name] !== undefined ? parseInt(customPrices[name]) : (FOOD_DB.find(f => f.n === name)?.p || 0);
+    }
+
+    function updatePrice(name, e) {
+        e.stopPropagation();
+        const nPrice = prompt(`Editar precio COP para ${name}:`, getPrice(name));
+        if (nPrice !== null && !isNaN(nPrice)) {
+            customPrices[name] = parseInt(nPrice);
+            localStorage.setItem('ns_prices_pro', JSON.stringify(customPrices));
+            renderLibrary(); renderGrid(); analyze();
+        }
+    }
 
     function renderLibrary() {
         const search = document.getElementById('search').value.toLowerCase();
@@ -199,6 +217,10 @@
                             <div class="food-name" onclick="addItem('${f.n}')">
                                 <div class="dot ${f.t==='A'?'dot-a':'dot-e'}"></div> ${f.n}
                             </div>
+                            <div class="price-box">
+                                <span class="price-val">${getPrice(f.n).toLocaleString('es-CO')}</span>
+                                <span class="btn-edit" onclick="updatePrice('${f.n}', event)">✏️</span>
+                            </div>
                         </div>`).join('')}</div>`;
         }).join('');
     }
@@ -210,7 +232,7 @@
                 <div class="day-head"><b>${day}</b><span>${info.n}</span></div>
                 ${['D', 'A', 'C'].map(m => {
                     const k = `${day}-${m}`;
-                    (schedule[k] || []).forEach(n => total += FOOD_DB.find(f=>f.n===n)?.p || 0);
+                    (schedule[k] || []).forEach(n => total += getPrice(n));
                     return `<div class="meal-box ${selectedKey===k?'selected':''}" onclick="selectMeal('${k}')">
                         ${(schedule[k] || []).map((n, i) => {
                             const f = FOOD_DB.find(x => x.n === n);
@@ -243,7 +265,7 @@
         const badge = document.getElementById('chakraBadge');
         badge.innerText = `Chakra ${info.n}: ${info.i}`;
         badge.style.background = info.c;
-        document.getElementById('analysisDesc').innerText = `${a} Alimentos Amigos | ${e} Alimentos Enemigos`;
+        document.getElementById('analysisDesc').innerText = `${a} Alimentos A | ${e} Alimentos E`;
     }
 
     function printList() {
@@ -251,11 +273,11 @@
         const summary = all.reduce((acc, n) => { acc[n] = (acc[n] || 0) + 1; return acc; }, {});
         let rows = "", total = 0;
         for(let n in summary) {
-            const p = FOOD_DB.find(f=>f.n===n)?.p || 0;
+            const p = getPrice(n);
             total += (p * summary[n]);
-            rows += `<tr><td>${n}</td><td>${summary[n]}</td><td>$${(p*summary[n]).toLocaleString()}</td></tr>`;
+            rows += `<tr><td>${n}</td><td>${summary[n]}</td><td>$${p.toLocaleString()}</td><td>$${(p*summary[n]).toLocaleString()}</td></tr>`;
         }
-        document.getElementById('printArea').innerHTML = `<h2>🛒 Lista de Compras Chakra 3x1</h2><table><thead><tr><th>Item</th><th>Cant</th><th>Subtotal</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><th colspan="2">TOTAL ESTIMADO</th><th>COP ${total.toLocaleString()}</th></tr></tfoot></table>`;
+        document.getElementById('printArea').innerHTML = `<h2>🛒 Lista de Compras Chakra 3x1</h2><table><thead><tr><th>Item</th><th>Cant</th><th>Precio Unit</th><th>Subtotal</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><th colspan="3">TOTAL ESTIMADO</th><th>COP ${total.toLocaleString()}</th></tr></tfoot></table>`;
         window.print();
     }
 
