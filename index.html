@@ -3,88 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nutrición Pro COP - Lista Completa</title>
+    <title>NutriChakra 3x1 Pro</title>
+    
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+
     <style>
         :root {
             --tipo-a: #10b981; --tipo-e: #ef4444; --bg: #0f172a; --card: #1e293b;
             --text: #f8fafc; --primary: #6366f1;
             --rojo: #ef4444; --naranja: #f97316; --amarillo: #facc15;
             --verde: #22c55e; --azul: #3b82f6; --indigo: #6366f1; --violeta: #a855f7;
-            --blanco: #ffffff;
         }
 
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh; overflow: hidden; }
         
-        /* Interfaz */
-        .container { display: grid; grid-template-columns: 400px 1fr; gap: 20px; padding: 20px; height: 100vh; box-sizing: border-box; }
+        .container { display: grid; grid-template-columns: 380px 1fr; gap: 20px; padding: 20px; height: 100vh; box-sizing: border-box; }
         .sidebar { background: var(--card); border-radius: 15px; display: flex; flex-direction: column; border: 1px solid #334155; overflow: hidden; }
         .sidebar-header { padding: 15px; background: rgba(0,0,0,0.2); }
         .food-container { overflow-y: auto; flex-grow: 1; padding: 10px; }
 
-        .accordion-item { border-bottom: 1px solid #334155; }
         .accordion-header { 
-            width: 100%; padding: 12px 15px; background: none; border: none;
-            color: var(--primary); font-weight: bold; text-align: left;
-            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.85rem; text-transform: uppercase;
+            width: 100%; padding: 12px; background: none; border: none; color: var(--primary); 
+            font-weight: bold; text-align: left; cursor: pointer; border-bottom: 1px solid #334155;
+            font-size: 0.8rem; text-transform: uppercase;
         }
-        .accordion-content { display: none; padding: 8px; background: rgba(0,0,0,0.1); }
+        .accordion-content { display: none; padding: 5px; }
         .accordion-content.active { display: block; }
 
         .food-item { 
-            display: flex; align-items: center; padding: 8px 10px; margin-bottom: 5px;
-            background: #2d3a4f; border-radius: 6px; font-size: 0.8rem;
-            border-right: 5px solid var(--f-color);
+            display: flex; align-items: center; padding: 8px; margin-bottom: 5px;
+            background: #2d3a4f; border-radius: 6px; font-size: 0.75rem; border-right: 5px solid var(--f-color);
         }
         .food-name { cursor: pointer; flex-grow: 1; display: flex; align-items: center; }
-        .price-container { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 4px; }
-        .price-tag { font-size: 0.75rem; color: var(--amarillo); font-weight: bold; }
-        .btn-edit-price { cursor: pointer; font-size: 0.7rem; opacity: 0.6; }
-
         .dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 10px; }
-        .dot-a { background: var(--tipo-a); }
-        .dot-e { background: var(--tipo-e); }
+        .dot-a { background: var(--tipo-a); } .dot-e { background: var(--tipo-e); }
 
-        /* Planificador */
         .planner-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; height: 72vh; }
         .day-col { background: var(--card); border-radius: 12px; border-top: 6px solid var(--d-color); display: flex; flex-direction: column; }
-        .day-head { padding: 6px; text-align: center; background: rgba(0,0,0,0.2); }
+        .day-head { padding: 8px; text-align: center; background: rgba(0,0,0,0.2); }
         .day-head b { color: var(--d-color); font-size: 0.8rem; display: block; }
+        .day-head span { font-size: 0.6rem; opacity: 0.7; color: white; }
 
         .meal-box { flex: 1; padding: 5px; border-bottom: 1px solid #334155; overflow-y: auto; cursor: cell; }
-        .meal-box.selected { border: 2px solid var(--primary); background: rgba(99, 102, 241, 0.1); }
+        .meal-box.selected { background: rgba(255, 255, 255, 0.05); border: 2px solid var(--primary); }
         
-        .plate-item { 
-            font-size: 0.65rem; padding: 3px 5px; border-radius: 4px; margin-bottom: 3px; 
-            background: #1e293b; border-right: 3px solid var(--f-color);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .btn-remove { color: var(--tipo-e); cursor: pointer; font-weight: bold; margin-left: 4px; }
+        .plate-item { font-size: 0.65rem; padding: 4px; border-radius: 4px; margin-bottom: 3px; background: #0f172a; border-left: 3px solid var(--f-color); display: flex; justify-content: space-between; }
+        .btn-remove { color: var(--tipo-e); cursor: pointer; font-weight: bold; }
 
-        /* Barra Inferior */
-        .analyzer { background: var(--card); padding: 15px; border-radius: 12px; margin-top: 15px; display: flex; align-items: center; gap: 20px; justify-content: space-between; border: 1px solid #334155; }
-        .plate-viz { width: 50px; height: 50px; border-radius: 50%; border: 3px solid #0f172a; background: #1e293b; }
+        .analyzer { background: var(--card); padding: 15px; border-radius: 15px; margin-top: 15px; display: flex; align-items: center; gap: 20px; border: 1px solid #334155; }
+        .plate-viz { width: 55px; height: 55px; border-radius: 50%; border: 3px solid #0f172a; transition: 0.3s; }
+        .chakra-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: bold; text-transform: uppercase; color: #fff; display: inline-block; margin-top: 5px; }
         .budget-val { font-size: 1.2rem; font-weight: bold; color: var(--amarillo); }
-        .btn-print { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-print { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-left: auto; }
 
-        input#search { width: 100%; padding: 10px; border-radius: 8px; border: none; background: #0f172a; color: white; }
+        input#search { width: 100%; padding: 10px; border-radius: 8px; border: none; background: #0f172a; color: white; outline: none; }
 
-        /* --- CORRECCIÓN DE IMPRESIÓN --- */
         #printArea { display: none; }
-        @media print {
-            body { background: white !important; height: auto; overflow: visible; }
-            .container { display: none !important; }
-            #printArea { 
-                display: block !important; 
-                color: black !important; 
-                width: 100%; 
-                padding: 20px;
-            }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #333; padding: 10px; text-align: left; color: black; }
-            th { background-color: #eee; }
-            h1 { text-align: center; }
-        }
+        @media print { .container { display: none !important; } #printArea { display: block !important; color: black; } table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid #000; padding: 8px; } }
     </style>
 </head>
 <body>
@@ -98,18 +76,17 @@
     <div class="main-content">
         <div class="planner-grid" id="grid"></div>
         <div class="analyzer">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div class="plate-viz" id="plateChart"></div>
-                <div>
-                    <h4 id="analysisTitle" style="margin:0; font-size:0.85rem;">Plan 3x1</h4>
-                    <p id="analysisDesc" style="font-size:0.7rem; color:#94a3b8; margin:0">Click en un bloque</p>
-                </div>
+            <div class="plate-viz" id="plateChart"></div>
+            <div>
+                <h4 id="analysisTitle" style="margin:0; font-size:0.9rem;">Analizador Energético</h4>
+                <div id="chakraBadge" class="chakra-badge" style="background: #334155;">Chakra -</div>
+                <p id="analysisDesc" style="font-size:0.7rem; color:#94a3b8; margin:5px 0 0">Click en un bloque para analizar</p>
             </div>
             <div style="text-align: right; border-left: 1px solid #334155; padding-left: 20px;">
-                <span style="font-size: 0.6rem; opacity: 0.8; display: block;">PRESUPUESTO TOTAL</span>
+                <span style="font-size: 0.6rem; opacity: 0.8; display: block;">PRESUPUESTO ESTIMADO</span>
                 <div class="budget-val" id="totalBudget">COP 0</div>
             </div>
-            <button class="btn-print" onclick="printList()">🛒 Imprimir Compras</button>
+            <button class="btn-print" onclick="printList()">🛒 Compras</button>
         </div>
     </div>
 </div>
@@ -117,8 +94,15 @@
 <div id="printArea"></div>
 
 <script>
-    // FORMATEADOR COP
-    const formatCOP = (n) => "COP " + Math.round(n).toLocaleString('es-CO');
+    const CHAKRAS = {
+        'Dom': { c: 'var(--rojo)', n: 'Raíz', i: 'Vitalidad' },
+        'Lun': { c: 'var(--naranja)', n: 'Sacro', i: 'Creatividad' },
+        'Mar': { c: 'var(--amarillo)', n: 'Plexo', i: 'Poder' },
+        'Mie': { c: 'var(--verde)', n: 'Corazón', i: 'Amor' },
+        'Jue': { c: 'var(--azul)', n: 'Garganta', i: 'Verdad' },
+        'Vie': { c: 'var(--indigo)', n: '3er Ojo', i: 'Intuición' },
+        'Sab': { c: 'var(--violeta)', n: 'Corona', i: 'Conexión' }
+    };
 
     const FOOD_DB = [
         // PROTEÍNAS
@@ -200,28 +184,8 @@
         { n: "Pizza (E)", t: "E", c: "rojo", cat: "Carbohidratos E", p: 25000 }
     ];
 
-    const DAYS = {
-        'Dom': { c: 'var(--rojo)' }, 'Lun': { c: 'var(--naranja)' }, 'Mar': { c: 'var(--amarillo)' },
-        'Mie': { c: 'var(--verde)' }, 'Jue': { c: 'var(--azul)' }, 'Vie': { c: 'var(--indigo)' }, 'Sab': { c: 'var(--violeta)' }
-    };
-
-    let schedule = JSON.parse(localStorage.getItem('ns_plan_cop')) || {};
-    let customPrices = JSON.parse(localStorage.getItem('ns_prices_cop')) || {};
-    let selectedMealKey = 'Dom-D';
-
-    function getPrice(name) {
-        return customPrices[name] !== undefined ? parseInt(customPrices[name]) : (FOOD_DB.find(f => f.n === name)?.p || 0);
-    }
-
-    function updatePrice(name, e) {
-        e.stopPropagation();
-        const nPrice = prompt(`Precio COP para ${name}:`, getPrice(name));
-        if (nPrice !== null && !isNaN(nPrice)) {
-            customPrices[name] = parseInt(nPrice);
-            localStorage.setItem('ns_prices_cop', JSON.stringify(customPrices));
-            renderLibrary(); renderGrid();
-        }
-    }
+    let schedule = JSON.parse(localStorage.getItem('ns_plan_pro')) || {};
+    let selectedKey = 'Dom-A';
 
     function renderLibrary() {
         const search = document.getElementById('search').value.toLowerCase();
@@ -229,97 +193,73 @@
         document.getElementById('accordionLibrary').innerHTML = cats.map(cat => {
             const items = FOOD_DB.filter(f => f.cat === cat && f.n.toLowerCase().includes(search));
             if (!items.length) return '';
-            return `<div class="accordion-item">
-                <button class="accordion-header" onclick="this.nextElementSibling.classList.toggle('active')">${cat} ▾</button>
-                <div class="accordion-content">
-                    ${items.map(f => `
+            return `<button class="accordion-header" onclick="this.nextElementSibling.classList.toggle('active')">${cat} ▾</button>
+                    <div class="accordion-content active">${items.map(f => `
                         <div class="food-item" style="--f-color: var(--${f.c})">
                             <div class="food-name" onclick="addItem('${f.n}')">
-                                <div class="dot ${f.t === 'A' ? 'dot-a' : 'dot-e'}"></div> ${f.n}
+                                <div class="dot ${f.t==='A'?'dot-a':'dot-e'}"></div> ${f.n}
                             </div>
-                            <div class="price-container">
-                                <span class="price-tag">${getPrice(f.n).toLocaleString('es-CO')}</span>
-                                <span class="btn-edit-price" onclick="updatePrice('${f.n}', event)">✏️</span>
-                            </div>
-                        </div>`).join('')}
-                </div>
-            </div>`;
+                        </div>`).join('')}</div>`;
         }).join('');
     }
 
     function renderGrid() {
         let total = 0;
-        document.getElementById('grid').innerHTML = Object.entries(DAYS).map(([name, data]) => `
-            <div class="day-col" style="--d-color: ${data.c}">
-                <div class="day-head"><b>${name}</b></div>
+        document.getElementById('grid').innerHTML = Object.entries(CHAKRAS).map(([day, info]) => `
+            <div class="day-col" style="--d-color: ${info.c}">
+                <div class="day-head"><b>${day}</b><span>${info.n}</span></div>
                 ${['D', 'A', 'C'].map(m => {
-                    const key = `${name}-${m}`;
-                    (schedule[key] || []).forEach(n => total += getPrice(n));
-                    return `<div class="meal-box ${selectedMealKey === key ? 'selected' : ''}" onclick="selectMeal('${key}')">
-                        ${(schedule[key] || []).map((n, i) => {
+                    const k = `${day}-${m}`;
+                    (schedule[k] || []).forEach(n => total += FOOD_DB.find(f=>f.n===n)?.p || 0);
+                    return `<div class="meal-box ${selectedKey===k?'selected':''}" onclick="selectMeal('${k}')">
+                        ${(schedule[k] || []).map((n, i) => {
                             const f = FOOD_DB.find(x => x.n === n);
                             return `<div class="plate-item" style="--f-color: var(--${f?.c || 'gray'})">${n} 
-                                <span class="btn-remove" onclick="removeItem('${key}', ${i}, event)">×</span></div>`;
+                                <span class="btn-remove" onclick="removeItem('${k}', ${i}, event)">×</span></div>`;
                         }).join('')}
                     </div>`;
                 }).join('')}
             </div>`).join('');
-        document.getElementById('totalBudget').innerText = formatCOP(total);
+        document.getElementById('totalBudget').innerText = "COP " + total.toLocaleString('es-CO');
     }
 
-    function selectMeal(key) { selectedMealKey = key; renderGrid(); analyze(); }
-
-    function addItem(name) {
-        if(!schedule[selectedMealKey]) schedule[selectedMealKey] = [];
-        schedule[selectedMealKey].push(name);
-        localStorage.setItem('ns_plan_cop', JSON.stringify(schedule));
-        renderGrid(); analyze();
-    }
-
-    function removeItem(key, i, e) {
-        e.stopPropagation(); schedule[key].splice(i, 1);
-        localStorage.setItem('ns_plan_cop', JSON.stringify(schedule));
-        renderGrid(); analyze();
-    }
+    function selectMeal(k) { selectedKey = k; renderGrid(); analyze(); }
+    function addItem(n) { if(!schedule[selectedKey]) schedule[selectedKey] = []; schedule[selectedKey].push(n); save(); }
+    function removeItem(k, i, e) { e.stopPropagation(); schedule[k].splice(i, 1); save(); }
+    function save() { localStorage.setItem('ns_plan_pro', JSON.stringify(schedule)); renderGrid(); analyze(); }
 
     function analyze() {
-        const items = schedule[selectedMealKey] || [];
-        const chart = document.getElementById('plateChart');
+        const dayPrefix = selectedKey.split('-')[0];
+        const info = CHAKRAS[dayPrefix];
+        const items = schedule[selectedKey] || [];
         let a = 0, e = 0;
         items.forEach(n => { const f = FOOD_DB.find(x => x.n === n); if(f?.t === 'A') a++; else e++; });
-        chart.style.background = items.length ? `conic-gradient(var(--tipo-e) 0% 25%, var(--tipo-a) 25% 100%)` : '#1e293b';
-        document.getElementById('analysisDesc').innerText = items.length ? `${a} Tipo A | ${e} Tipo E` : "Selecciona un bloque";
+        
+        const total = a + e;
+        const ePerc = total > 0 ? (e / total) * 100 : 0;
+        document.getElementById('plateChart').style.background = total > 0 ? `conic-gradient(var(--tipo-e) 0% ${ePerc}%, var(--tipo-a) ${ePerc}% 100%)` : '#334155';
+        
+        document.getElementById('analysisTitle').innerText = `Plato ${selectedKey}`;
+        const badge = document.getElementById('chakraBadge');
+        badge.innerText = `Chakra ${info.n}: ${info.i}`;
+        badge.style.background = info.c;
+        document.getElementById('analysisDesc').innerText = `${a} Alimentos Amigos | ${e} Alimentos Enemigos`;
     }
 
     function printList() {
         const all = Object.values(schedule).flat();
-        if(!all.length) return alert("El planificador está vacío.");
-        
-        const summary = all.reduce((acc, n) => {
-            if(!acc[n]) acc[n] = { q: 0, p: getPrice(n) };
-            acc[n].q++; return acc;
-        }, {});
-
+        const summary = all.reduce((acc, n) => { acc[n] = (acc[n] || 0) + 1; return acc; }, {});
         let rows = "", total = 0;
         for(let n in summary) {
-            const sub = summary[n].q * summary[n].p;
-            total += sub;
-            rows += `<tr><td>${n}</td><td>${summary[n].q}</td><td>${summary[n].p.toLocaleString('es-CO')}</td><td>${sub.toLocaleString('es-CO')}</td></tr>`;
+            const p = FOOD_DB.find(f=>f.n===n)?.p || 0;
+            total += (p * summary[n]);
+            rows += `<tr><td>${n}</td><td>${summary[n]}</td><td>$${(p*summary[n]).toLocaleString()}</td></tr>`;
         }
-
-        document.getElementById('printArea').innerHTML = `
-            <h1>🛒 LISTA DE COMPRAS </h1>
-            <p>Generado: ${new Date().toLocaleDateString()}</p>
-            <table>
-                <thead><tr><th>Alimento</th><th>Cantidad</th><th>Precio Unit.</th><th>Subtotal</th></tr></thead>
-                <tbody>${rows}</tbody>
-                <tfoot><tr><th colspan="3" style="text-align:right">TOTAL ESTIMADO:</th><th>COP ${total.toLocaleString('es-CO')}</th></tr></tfoot>
-            </table>
-        `;
+        document.getElementById('printArea').innerHTML = `<h2>🛒 Lista de Compras Chakra 3x1</h2><table><thead><tr><th>Item</th><th>Cant</th><th>Subtotal</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><th colspan="2">TOTAL ESTIMADO</th><th>COP ${total.toLocaleString()}</th></tr></tfoot></table>`;
         window.print();
     }
 
-    renderLibrary(); renderGrid();
+    renderLibrary(); renderGrid(); analyze();
 </script>
 </body>
 </html>
